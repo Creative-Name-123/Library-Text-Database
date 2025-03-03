@@ -1,1 +1,35 @@
+from tkinter import *
+variable = 0
+x = -50
+y = 30
+# Creating a tkinter window
+root = Tk()
 
+# Initialize tkinter window
+root.geometry('500x250')
+
+# Creating a Button
+btn = Button(root, text="Click me!")
+btn.pack()
+
+
+# Defining method on click
+def Clicked(event):
+    global variable
+    global x
+    global y
+    x += 55
+    if x > 450:
+        x = 0
+        y += 30
+    variable += 1
+    btn2 = Button(root, text='Score: ' + str(variable), foreground="purple")
+    btn2.place(x=x, y=y)
+    btn2.bind("<Button>", Clicked)
+
+
+# bind button
+btn.bind("<Button-1>", Clicked)
+btn.pack()
+
+root.mainloop()
