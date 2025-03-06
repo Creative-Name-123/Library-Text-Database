@@ -1,5 +1,8 @@
+import tkinter
 from tkinter import *
-import tkinter.messagebox
+from tkinter import ttk
+from tkinter import scrolledtext
+
 
 variable = 0
 x = -50
@@ -39,10 +42,19 @@ def Clicked(event):
 
 
 def print_stuff(event):
-    #book_list = book.read()
-    book_list = ["a", "ab", "abc", "abcd"]
-    tkinter.messagebox.showinfo(title="Books:", message=("\n".join(book_list)))
+    # do stuff from the lines down there
+    useless_variable = 2
 
+
+book_list = ["a", "ab", "abc", "abcd", "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz", "a", "ab", "abc", "abcd", "abcdefghijklmnopqrstuvwxyz"]
+list_window = tkinter.Tk()
+list_window.title("Books:")
+ttk.Label(list_window, text=str(book_list))
+list_area = scrolledtext.ScrolledText(list_window, wrap=tkinter.WORD, width=30, height=10)
+for i in range(len(book_list)):
+    list_area.insert(END, book_list[i])
+    list_area.insert(END, "\n")
+list_area.pack(fill=BOTH, side=LEFT, expand=TRUE)
 
 # bind button
 btn.bind("<Button-1>", Clicked)
