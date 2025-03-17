@@ -4,9 +4,28 @@ from tkinter import ttk
 from tkinter import scrolledtext
 
 
-variable = 0
-x = -50
-y = 30
+# Opening the list of books
+book_list = open("books", "r")
+book_list = str(book_list).split("`")
+book_list.pop(0)
+print(book_list)
+
+
+
+def print_stuff():
+    book_list = ["a", "ab", "abc", "abcd",
+                 "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz", "a", "ab", "abc",
+                 "abcd", "abcdefghijklmnopqrstuvwxyz"]
+    list_window = Toplevel()
+    list_window.title("Books:")
+    ttk.Label(list_window, text=str(book_list))
+    list_area = scrolledtext.ScrolledText(list_window, wrap=tkinter.WORD, width=30, height=10)
+    for i in range(len(book_list)):
+        list_area.insert(END, book_list[i])
+        list_area.insert(END, "\n")
+    list_area.pack(fill=BOTH, side=LEFT, expand=TRUE)
+    return "nothing"
+
 
 # Opening book file
 book = open("books", "r")
@@ -17,47 +36,10 @@ root = Tk()
 # Initialize tkinter window
 root.geometry('500x250')
 
-# Creating a Button
-btn = Button(root, text="Click me!")
-btn.pack()
 
 # Creating an actual button
-btnSeeBooks = Button(root, text="See all books")
-btnSeeBooks.place(x=70, y=0)
+btnSeeBooks = Button(root, text="See all books", command=print_stuff)
+btnSeeBooks.place(x=5, y=5)
 
 
-# Defining method on click
-def Clicked(event):
-    global variable
-    global x
-    global y
-    x += 55
-    if x > 450:
-        x = 0
-        y += 30
-    variable += 1
-    btn2 = Button(root, text='Score: ' + str(variable), foreground="purple")
-    btn2.place(x=x, y=y)
-    btn2.bind("<Button-2>", Clicked)
-
-
-def print_stuff(event):
-    # do stuff from the lines down there
-    useless_variable = 2
-
-
-book_list = ["a", "ab", "abc", "abcd", "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz", "a", "ab", "abc", "abcd", "abcdefghijklmnopqrstuvwxyz"]
-list_window = tkinter.Tk()
-list_window.title("Books:")
-ttk.Label(list_window, text=str(book_list))
-list_area = scrolledtext.ScrolledText(list_window, wrap=tkinter.WORD, width=30, height=10)
-for i in range(len(book_list)):
-    list_area.insert(END, book_list[i])
-    list_area.insert(END, "\n")
-list_area.pack(fill=BOTH, side=LEFT, expand=TRUE)
-
-# bind button
-btn.bind("<Button-1>", Clicked)
-btn.pack()
-btnSeeBooks.bind("<Button-3>", print_stuff)
 root.mainloop()
