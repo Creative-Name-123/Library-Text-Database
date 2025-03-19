@@ -2,7 +2,7 @@ import tkinter
 from tkinter import *
 from tkinter import ttk
 from tkinter import scrolledtext
-
+# https://www.youtube.com/watch?v=6v1bVWI8nl8
 
 # Opening the list of books
 books = open("books", "r+").read()
