@@ -9,21 +9,35 @@ print(books)
 book_list = books.split("\n")
 print(book_list)
 
+# Opening the list of authors
+authors = open("authors.txt", "r+").read()
+print(authors)
+author_list = authors.split("\n")
+print(author_list)
+
 
 def print_stuff():
+    global books
+    global book_list
+    global authors
+    global author_list
+    books = open("books.txt", "r+").read()
+    book_list = books.split("\n")
+    authors = open("authors.txt", "r+").read()
+    author_list = authors.split("\n")
     list_window = Toplevel()
     list_window.title("Books:")
     ttk.Label(list_window, text=str(books))
     list_area = scrolledtext.ScrolledText(list_window, wrap=tkinter.WORD, width=30, height=10)
     for i in range(len(book_list)):
-        list_area.insert(END, book_list[i])
+        list_area.insert(END, str(i) + ". " + book_list[i] + ", by " + author_list[i])
         list_area.insert(END, "\n")
     list_area.pack(fill=BOTH, side=LEFT, expand=TRUE)
     return "nothing"
 
 
 def edit_book():
-    with open("books.txt", "r") as file:  # change r?
+    with open("books.txt", "r") as file:
         lines = file.readlines()
     if len(bookNumberInputArea.get("1.0", "end-1c")) > 0:
         try:
@@ -32,10 +46,29 @@ def edit_book():
             print("no")
         else:
             if int(bookNumberInputArea.get("1.0", "end-1c")) <= len(lines):
-                lines[int(bookNumberInputArea.get("1.0", "end-1c"))] = bookNewTitleInputArea.get("1.0", "end-1c")
-    with open("books.txt", "w+") as file:  # change w+?
+                lines[int(bookNumberInputArea.get("1.0", "end-1c"))] = bookNewTitleInputArea.get("1.0", "end-1c") + "\n"
+    with open("books.txt", "w+") as file:
         for line in lines:
             file.write(line)
+            print(line)
+    return "nothing"
+
+
+def edit_author():
+    with open("authors.txt", "r") as file:
+        lines = file.readlines()
+    if len(bookNumberAuthorInputArea.get("1.0", "end-1c")) > 0:
+        try:
+            int(bookNumberAuthorInputArea.get("1.0", "end-1c"))
+        except():
+            print("no")
+        else:
+            if int(bookNumberAuthorInputArea.get("1.0", "end-1c")) <= len(lines):
+                lines[int(bookNumberAuthorInputArea.get("1.0", "end-1c"))] = bookNewAuthorInputArea.get("1.0", "end-1c") + "\n"
+    with open("authors.txt", "w+") as file:
+        for line in lines:
+            file.write(line)
+            print(line)
     return "nothing"
 
 
@@ -49,14 +82,24 @@ root.geometry('500x250')
 btnSeeBooks = Button(root, text="See all books", command=print_stuff)
 btnSeeBooks.place(x=5, y=5)
 
+# Creating the edit a book button
+btnEditABook = Button(root, text="Save book edits (box 1 is book number; box 2 is new book name)", command=edit_book)
+btnEditABook.place(x=5, y=35)
+
 # Creating input areas for editing books
 bookNumberInputArea = Text(root, height=1, width=3, bg="light yellow")
-bookNumberInputArea.place(x=80, y=40)
+bookNumberInputArea.place(x=5, y=68)
 bookNewTitleInputArea = Text(root, height=1, width=15, bg="light yellow")
-bookNewTitleInputArea.place(x=120, y=40)
+bookNewTitleInputArea.place(x=40, y=68)
 
-# Creating the edit a book button
-btnEditABook = Button(root, text="Edit a book", command=edit_book())
-btnEditABook.place(x=5, y=35)
+# Creating the edit authors button
+btnEditAnAuthor = Button(root, text="Save author edits (box 1 is book number; box 2 is new author)", command=edit_author)
+btnEditAnAuthor.place(x=5, y=95)
+
+# Creating input areas for editing authors
+bookNumberAuthorInputArea = Text(root, height=1, width=3, bg="light yellow")
+bookNumberAuthorInputArea.place(x=5, y=128)
+bookNewAuthorInputArea = Text(root, height=1, width=15, bg="light yellow")
+bookNewAuthorInputArea.place(x=40, y=128)
 
 root.mainloop()
