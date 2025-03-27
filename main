@@ -15,22 +15,50 @@ print(authors)
 author_list = authors.split("\n")
 print(author_list)
 
+# Opening the list of types
+types = open("types.txt", "r+").read()
+print(types)
+type_list = types.split("\n")
+print(type_list)
+
+# Opening the list of ISBNs
+ISBNs = open("ISBNs.txt", "r+").read()
+print(ISBNs)
+ISBN_list = ISBNs.split("\n")
+print(ISBN_list)
+
 
 def print_stuff():
     global books
     global book_list
     global authors
     global author_list
+    global types
+    global type_list
+    global ISBNs
+    global ISBN_list
     books = open("books.txt", "r+").read()
     book_list = books.split("\n")
     authors = open("authors.txt", "r+").read()
     author_list = authors.split("\n")
+    authors = open("types.txt", "r+").read()
+    type_list = types.split("\n")
+    ISBNs = open("ISBNs.txt", "r+").read()
+    ISBN_list = ISBNs.split("\n")
     list_window = Toplevel()
-    list_window.title("Books:")
+    list_window.title("Entries:")
     ttk.Label(list_window, text=str(books))
-    list_area = scrolledtext.ScrolledText(list_window, wrap=tkinter.WORD, width=30, height=10)
+    list_area = scrolledtext.ScrolledText(list_window, wrap=tkinter.WORD, width=60, height=20)
     for i in range(len(book_list)):
-        list_area.insert(END, str(i) + ". " + book_list[i] + ", by " + author_list[i])
+        if type_list[i] == "Book":
+            list_area.insert(END, str(i) + ". " + book_list[i])
+            list_area.insert(END, "\n      By " + author_list[i] + " (" + type_list[i] + ")" + "(ISBN: " + ISBN_list[i] + ")")
+        elif type_list[i] == "Movie":
+            list_area.insert(END, str(i) + ". " + book_list[i])
+            list_area.insert(END, "\n      Directed by " + author_list[i] + " (" + type_list[i] + ")")
+        else:
+            list_area.insert(END, str(i) + ". " + book_list[i])
+            list_area.insert(END, "By " + author_list[i] + " (" + type_list[i] + ")")
         list_area.insert(END, "\n")
     list_area.pack(fill=BOTH, side=LEFT, expand=TRUE)
     return "nothing"
@@ -46,7 +74,7 @@ def edit_book():
             print("no")
         else:
             if int(bookNumberInputArea.get("1.0", "end-1c")) <= len(lines):
-                lines[int(bookNumberInputArea.get("1.0", "end-1c"))] = bookNewTitleInputArea.get("1.0", "end-1c") + "\n"
+                lines[int(bookNumberInputArea.get("1.0", "end-1c"))] = bookTitleInputArea.get("1.0", "end-1c") + "\n"
     with open("books.txt", "w+") as file:
         for line in lines:
             file.write(line)
@@ -64,8 +92,26 @@ def edit_author():
             print("no")
         else:
             if int(bookNumberAuthorInputArea.get("1.0", "end-1c")) <= len(lines):
-                lines[int(bookNumberAuthorInputArea.get("1.0", "end-1c"))] = bookNewAuthorInputArea.get("1.0", "end-1c") + "\n"
+                lines[int(bookNumberAuthorInputArea.get("1.0", "end-1c"))] = bookAuthorInputArea.get("1.0", "end-1c") + "\n"
     with open("authors.txt", "w+") as file:
+        for line in lines:
+            file.write(line)
+            print(line)
+    return "nothing"
+
+
+def edit_type():
+    with open("types.txt", "r") as file:
+        lines = file.readlines()
+    if len(bookNumberTypeInputArea.get("1.0", "end-1c")) > 0:
+        try:
+            int(bookNumberTypeInputArea.get("1.0", "end-1c"))
+        except():
+            print("no")
+        else:
+            if int(bookNumberTypeInputArea.get("1.0", "end-1c")) <= len(lines):
+                lines[int(bookNumberTypeInputArea.get("1.0", "end-1c"))] = bookTypeInputArea.get("1.0", "end-1c") + "\n"
+    with open("types.txt", "w+") as file:
         for line in lines:
             file.write(line)
             print(line)
@@ -74,32 +120,50 @@ def edit_author():
 
 # Creating a tkinter window
 root = Tk()
-
-# Initialize tkinter window
-root.geometry('500x250')
+root.geometry('500x350')
 
 # Creating the See Books button
-btnSeeBooks = Button(root, text="See all books", command=print_stuff)
+btnSeeBooks = Button(root, text="See all entries", command=print_stuff)
 btnSeeBooks.place(x=5, y=5)
 
 # Creating the edit a book button
-btnEditABook = Button(root, text="Save book edits (box 1 is book number; box 2 is new book name)", command=edit_book)
+btnEditABook = Button(root, text="Save name edits (box 1 is the entry number; box 2 is the new name)", command=edit_book)
 btnEditABook.place(x=5, y=35)
 
 # Creating input areas for editing books
 bookNumberInputArea = Text(root, height=1, width=3, bg="light yellow")
 bookNumberInputArea.place(x=5, y=68)
-bookNewTitleInputArea = Text(root, height=1, width=15, bg="light yellow")
-bookNewTitleInputArea.place(x=40, y=68)
+bookTitleInputArea = Text(root, height=1, width=15, bg="light yellow")
+bookTitleInputArea.place(x=40, y=68)
 
 # Creating the edit authors button
-btnEditAnAuthor = Button(root, text="Save author edits (box 1 is book number; box 2 is new author)", command=edit_author)
+btnEditAnAuthor = Button(root, text="Save author edits (box 1 is the entry number; box 2 is the new author name)", command=edit_author)
 btnEditAnAuthor.place(x=5, y=95)
 
 # Creating input areas for editing authors
 bookNumberAuthorInputArea = Text(root, height=1, width=3, bg="light yellow")
 bookNumberAuthorInputArea.place(x=5, y=128)
-bookNewAuthorInputArea = Text(root, height=1, width=15, bg="light yellow")
-bookNewAuthorInputArea.place(x=40, y=128)
+bookAuthorInputArea = Text(root, height=1, width=15, bg="light yellow")
+bookAuthorInputArea.place(x=40, y=128)
+
+# Creating the edit type button
+btnEditAType = Button(root, text="Save type edits (box 1 is the entry number; box 2 is the new type)", command=edit_type)
+btnEditAType.place(x=5, y=155)
+
+# Creating input areas for editing types
+bookNumberTypeInputArea = Text(root, height=1, width=3, bg="light yellow")
+bookNumberTypeInputArea.place(x=5, y=188)
+bookTypeInputArea = Text(root, height=1, width=15, bg="light yellow")
+bookTypeInputArea.place(x=40, y=188)
+
+# Creating the edit type button
+btnEditAType = Button(root, text="Save ISBN edits (box 1 is the entry number; box 2 is the new ISBN)", command=edit_type)
+btnEditAType.place(x=5, y=215)
+
+# Creating input areas for editing types
+bookNumberTypeInputArea = Text(root, height=1, width=3, bg="light yellow")
+bookNumberTypeInputArea.place(x=5, y=248)
+bookTypeInputArea = Text(root, height=1, width=15, bg="light yellow")
+bookTypeInputArea.place(x=40, y=248)
 
 root.mainloop()
