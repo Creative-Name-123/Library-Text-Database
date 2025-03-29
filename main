@@ -142,7 +142,7 @@ def edit_isbn():
         else:
             if int(bookNumberISBNInputArea.get("1.0")) <= len(lines):
                 # ISBN-13 checker
-                if bookISBNInputArea.get("1.0") and bookISBNInputArea.get("1.0")[0] == 9 and bookISBNInputArea.get("1.0")[1] == 7 and (bookISBNInputArea.get("1.0")[2] == 8 or bookISBNInputArea.get("1.0")[2] == 9) and (bookISBNInputArea.get("1.0")[0] + bookISBNInputArea.get("1.0")[1] + bookISBNInputArea.get("1.0")[2] + bookISBNInputArea.get("1.0")[3] + bookISBNInputArea.get("1.0")[4] + bookISBNInputArea.get("1.0")[5] + bookISBNInputArea.get("1.0")[6] + bookISBNInputArea.get("1.0")[7] + bookISBNInputArea.get("1.0")[8] + bookISBNInputArea.get("1.0")[9] + bookISBNInputArea.get("1.0")[10] + bookISBNInputArea.get("1.0")[11]) % 10 == 0 and len(bookISBNInputArea.get("1.0")) == 13:
+                if bookISBNInputArea.get("1.0")[0] == 9 and bookISBNInputArea.get("1.0")[1] == 7 and (bookISBNInputArea.get("1.0")[2] == 8 or bookISBNInputArea.get("1.0")[2] == 9) and (bookISBNInputArea.get("1.0")[0] + bookISBNInputArea.get("1.0")[1] + bookISBNInputArea.get("1.0")[2] + bookISBNInputArea.get("1.0")[3] + bookISBNInputArea.get("1.0")[4] + bookISBNInputArea.get("1.0")[5] + bookISBNInputArea.get("1.0")[6] + bookISBNInputArea.get("1.0")[7] + bookISBNInputArea.get("1.0")[8] + bookISBNInputArea.get("1.0")[9] + bookISBNInputArea.get("1.0")[10] + bookISBNInputArea.get("1.0")[11]) % 10 == 0 and len(bookISBNInputArea.get("1.0")) == 13:
                     if bookISBNInputArea.get("1.0") in ISBN_list:  # If inputted value is a duplicate
                         error_window = Toplevel()
                         error_window.title("Error:")
@@ -166,7 +166,47 @@ def edit_isbn():
 
 
 def save_new_entry():
-    print("This button does nothing")
+    with open("books.txt", "a+") as books_file:
+        with open("authors.txt", "a+") as authors_file:
+            with open("types.txt", "a+") as types_file:
+                with open("ISBNs.txt", "a+") as ISBNs_file:
+                    if len(newTitle.get("1.0")) > 0 and len(newAuthor.get("1.0")) > 0 and len(newType.get("1.0")) > 0:
+                        print(newTitle.get("1.0"))  # These are only one character long for some reason
+                        if newTitle.get("1.0") in books_file:
+                            error_window = Toplevel()
+                            error_window.title("Error:")
+                            error_area = scrolledtext.ScrolledText(error_window, wrap=tkinter.WORD, width=25, height=5,bg="red")
+                            error_area.insert(END, "Duplicate book name")
+                            error_area.pack(fill=BOTH, side=LEFT, expand=TRUE)
+                        elif newType.get("1.0") == "Book":
+                            if int(bookISBNInputArea.get("1.0")[0]) == 9 and int(bookISBNInputArea.get("1.0")[1]) == 7 and (int(bookISBNInputArea.get("1.0")[2]) == 8 or int(bookISBNInputArea.get("1.0")[2]) == 9) and (int(bookISBNInputArea.get("1.0")[0]) + int(bookISBNInputArea.get("1.0")[1]) + int(bookISBNInputArea.get("1.0")[2]) + int(bookISBNInputArea.get("1.0")[3]) + int(bookISBNInputArea.get("1.0")[4]) + int(bookISBNInputArea.get("1.0")[5]) + int(bookISBNInputArea.get("1.0")[6]) + int(bookISBNInputArea.get("1.0")[7]) + int(bookISBNInputArea.get("1.0")[8]) + int(bookISBNInputArea.get("1.0")[9]) + int(bookISBNInputArea.get("1.0")[10]) + int(bookISBNInputArea.get("1.0")[11])) % 10 == 0 and len(bookISBNInputArea.get("1.0")) == 13:
+                                if newISBN.get("1.0") in ISBNs_file:
+                                    error_window = Toplevel()
+                                    error_window.title("Error:")
+                                    error_area = scrolledtext.ScrolledText(error_window, wrap=tkinter.WORD, width=25, height=5, bg="red")
+                                    error_area.insert(END, "Duplicate ISBN code")
+                                    error_area.pack(fill=BOTH, side=LEFT, expand=TRUE)
+                                else:
+                                    books_file.write("\n" + newTitle.get("1.0"))
+                                    authors_file.write("\n" + newAuthor.get("1.0"))
+                                    types_file.write("\n" + newType.get("1.0"))
+                                    ISBNs_file.write("\n" + newType.get("1.0"))
+                            else:
+                                error_window = Toplevel()
+                                error_window.title("Error:")
+                                error_area = scrolledtext.ScrolledText(error_window, wrap=tkinter.WORD, width=25, height=5, bg="red")
+                                error_area.insert(END, "Invalid ISBN-13 code")
+                                error_area.pack(fill=BOTH, side=LEFT, expand=TRUE)
+                        else:
+                            books_file.write("\n" + newTitle.get("1.0"))
+                            authors_file.write("\n" + newAuthor.get("1.0"))
+                            types_file.write("\n" + newType.get("1.0"))
+                            ISBNs_file.write("\n?")
+                    books_file.close()
+                    authors_file.close()
+                    types_file.close()
+                    ISBNs_file.close()
+
 
 
 def secret_command():
@@ -241,20 +281,20 @@ bookText.place(x=5, y=341)
 newTitle = Text(root, height=1, width=45, bg="light yellow")
 newTitle.place(x=48, y=341)
 
-authorText = Label(root, text="Author/creator name:")
+authorText = Label(root, text="Author/director/creator:")
 authorText.place(x=5, y=366)
 newAuthor = Text(root, height=1, width=20, bg="light yellow")
-newAuthor.place(x=127, y=366)
+newAuthor.place(x=140, y=366)
 
 typeText = Label(root, text="Type:")
 typeText.place(x=5, y=391)
 newType = Text(root, height=1, width=7, bg="light yellow")
 newType.place(x=42, y=391)
 
-typeText = Label(root, text="ISBN (for books only):")
-typeText.place(x=5, y=416)
-newType = Text(root, height=1, width=13, bg="light yellow")
-newType.place(x=127, y=416)
+ISBNText = Label(root, text="ISBN (for books only):")
+ISBNText.place(x=5, y=416)
+newISBN = Text(root, height=1, width=13, bg="light yellow")
+newISBN.place(x=127, y=416)
 
 
 # Nothing here
