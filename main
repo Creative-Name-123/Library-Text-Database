@@ -1,8 +1,8 @@
 import tkinter
 from tkinter import *
 from tkinter import scrolledtext
+from tkinter import ttk
 variable = 0
-number = 1
 
 # Opening the list of books
 books = open("books.txt", "r+").read()
@@ -61,25 +61,26 @@ def print_stuff():
 
 
 def edit_book():
-    with open("books.txt", "r") as file:
-        lines = file.readlines()
-        file.close()
-    with open("books.txt", "r") as file:
-        if len(bookNumberInputArea.get("1.0", "end-1c")) > 0 and len(bookTitleInputArea.get("1.0", "end-1c")) > 0:
-            try:
-                int(bookNumberInputArea.get("1.0", "end-1c"))
-            except():
-                print("no")
-            else:
-                if int(bookNumberInputArea.get("1.0", "end-1c")) <= len(lines):
-                    if bookTitleInputArea.get("1.0", "end-1c") in file:  # If inputted value is a duplicate
-                        error_window = Toplevel()
-                        error_window.title("Error:")
-                        error_area = scrolledtext.ScrolledText(error_window, wrap=tkinter.WORD, width=25, height=5,bg="red")
-                        error_area.insert(END, "Duplicate book name")
-                        error_area.pack(fill=BOTH, side=LEFT, expand=TRUE)
-                    else:
-                        lines[int(bookNumberInputArea.get("1.0", "end-1c"))] = bookTitleInputArea.get("1.0", "end-1c") + "\n"
+    global books
+    global book_list
+    books = open("books.txt", "r").read()
+    book_list = books.split("\n")
+    lines = open("books.txt", "r").readlines()
+    if len(bookNumberInputArea.get("1.0", "end-1c")) > 0 and len(bookTitleInputArea.get("1.0", "end-1c")) > 0:
+        try:
+            int(bookNumberInputArea.get("1.0", "end-1c"))
+        except():
+            print("no")
+        else:
+            if int(bookNumberInputArea.get("1.0", "end-1c")) <= len(lines):
+                if bookTitleInputArea.get("1.0", "end-1c") in book_list:  # If inputted value is a duplicate
+                    error_window = Toplevel()
+                    error_window.title("Error:")
+                    error_area = scrolledtext.ScrolledText(error_window, wrap=tkinter.WORD, width=25, height=5,bg="red")
+                    error_area.insert(END, "Duplicate book name")
+                    error_area.pack(fill=BOTH, side=LEFT, expand=TRUE)
+                else:
+                    lines[int(bookNumberInputArea.get("1.0", "end-1c"))] = bookTitleInputArea.get("1.0", "end-1c")
     with open("books.txt", "w+") as file:
         for line in lines:
             file.write(line)
@@ -88,9 +89,11 @@ def edit_book():
 
 
 def edit_author():
-    with open("authors.txt", "r") as file:
-        lines = file.readlines()
-        file.close()
+    global authors
+    global author_list
+    authors = open("authors.txt", "r").read()
+    author_list = authors.split("\n")
+    lines = open("authors.txt", "r").readlines()
     if len(bookNumberAuthorInputArea.get("1.0", "end-1c")) > 0 and len(bookAuthorInputArea.get("1.0", "end-1c")) > 0:
         try:
             int(bookNumberAuthorInputArea.get("1.0", "end-1c"))
@@ -98,7 +101,7 @@ def edit_author():
             print("no")
         else:
             if int(bookNumberAuthorInputArea.get("1.0", "end-1c")) <= len(lines):
-                lines[int(bookNumberAuthorInputArea.get("1.0", "end-1c"))] = bookAuthorInputArea.get("1.0", "end-1c") + "\n"
+                lines[int(bookNumberAuthorInputArea.get("1.0", "end-1c"))] = bookAuthorInputArea.get("1.0", "end-1c")
     with open("authors.txt", "w+") as file:
         for line in lines:
             file.write(line)
@@ -117,7 +120,7 @@ def edit_type():
             print("no")
         else:
             if int(bookNumberTypeInputArea.get("1.0", "end-1c")) <= len(lines):
-                lines[int(bookNumberTypeInputArea.get("1.0", "end-1c"))] = bookTypeInputArea.get("1.0", "end-1c") + "\n"
+                lines[int(bookNumberTypeInputArea.get("1.0", "end-1c"))] = bookTypeInputArea.get("1.0", "end-1c")
     with open("types.txt", "w+") as file:
         for line in lines:
             file.write(line)
@@ -126,9 +129,11 @@ def edit_type():
 
 
 def edit_isbn():
-    with open("ISBNs.txt", "r") as file:
-        lines = file.readlines()
-        file.close()
+    global ISBNs
+    global ISBN_list
+    ISBNs = open("ISBNs.txt", "r").read()
+    ISBN_list = ISBNs.split("\n")
+    lines = open("ISBNs.txt", "r").readlines()
     if len(bookNumberISBNInputArea.get("1.0", "end-1c")) > 0:
         try:
             int(bookNumberISBNInputArea.get("1.0", "end-1c"))
@@ -209,81 +214,165 @@ def save_new_entry():
 
 
 def delete_entry():
-    global number
-    len_list = 0
-    if number == 2:
-        do_not_repeat = True
-        number = 1
+    if len(deletePosition.get("1.0", "end-1c")) > 0:
+        if str(deletePosition.get("1.0", "end-1c")) == str(len(open("books.txt", "r").readlines())-1):
+            repeater = 2
+        else:
+            repeater = 1
     else:
-        do_not_repeat = False
-    rebuilding_book_list = []
-    rebuilding_author_list = []
-    rebuilding_type_list = []
-    rebuilding_isbn_list = []
-    with open("books.txt", "r+") as books_file:
-        with open("authors.txt", "r+") as authors_file:
-            with open("types.txt", "r+") as types_file:
-                with open("ISBNs.txt", "r+") as ISBNs_file:
-                    with open("books.txt", "r") as books_file_2:
-                        with open("authors.txt", "r") as authors_file_2:
-                            with open("types.txt", "r") as types_file_2:
-                                if deletePosition.get("1.0", "end-1c").isdigit():
-                                    if 0 <= int(deletePosition.get("1.0", "end-1c")) <= len(books_file_2.read())-1:
-                                        for i in range(len(authors_file_2.read())):
-                                            if not i == int(deletePosition.get("1.0", "end-1c")) and not types_file_2.readline() == "":
-                                                rebuilding_book_list.append(books_file.readline())
-                                                rebuilding_author_list.append(authors_file.readline())
-                                                rebuilding_type_list.append(types_file.readline())
-                                                rebuilding_isbn_list.append(ISBNs_file.readline())
-                                                len_list += 1
-                                            else:
-                                                books_file.readline()
-                                                authors_file.readline()
-                                                types_file.readline()
-                                                ISBNs_file.readline()
-                                        books_file.flush()
-                                        authors_file.flush()
-                                        types_file.flush()
-                                        ISBNs_file.flush()
-                                        with open("books.txt", "w+") as books_file_w:
-                                            with open("authors.txt", "w+") as authors_file_w:
-                                                with open("types.txt", "w+") as types_file_w:
-                                                    with open("ISBNs.txt", "w+") as ISBNs_file_w:
-                                                        for i in range(len_list):
-                                                            if not (i + 1 == len_list and int(deletePosition.get("1.0", "end-1c")) == len_list):
-                                                                books_file_w.write(rebuilding_book_list[i])
-                                                                authors_file_w.write(rebuilding_author_list[i])
-                                                                types_file_w.write(rebuilding_type_list[i])
-                                                                ISBNs_file_w.write(rebuilding_isbn_list[i])
-                                                            else:
-                                                                books_file_w.write(rebuilding_book_list[i][:-1])
-                                                                authors_file_w.write(rebuilding_author_list[i][:-1])
-                                                                types_file_w.write(rebuilding_type_list[i][:-1])
-                                                                ISBNs_file_w.write(rebuilding_isbn_list[i][:-1])
-                                                                if not do_not_repeat:
-                                                                    books_file_2.close()
-                                                                    authors_file_2.close()
-                                                                    types_file_2.close()
-                                                                    books_file_w.close()
-                                                                    authors_file_w.close()
-                                                                    types_file_w.close()
-                                                                    ISBNs_file_w.close()
-                                                                    number = 2
-                                                                    print("going again")
-                                                                    delete_entry()
-                                                        books_file_w.close()
-                                                        authors_file_w.close()
-                                                        types_file_w.close()
-                                                        ISBNs_file_w.close()
-                                books_file.close()
-                                authors_file.close()
-                                types_file.close()
-                                ISBNs_file.close()
-                                books_file_2.close()
-                                authors_file_2.close()
-                                types_file_2.close()
+        repeater = 0
+    for an_amazing_variable_name in range(repeater):
+        len_list = 0
+        rebuilding_book_list = []
+        rebuilding_author_list = []
+        rebuilding_type_list = []
+        rebuilding_isbn_list = []
+        with (open("books.txt", "r+") as books_file):
+            with open("authors.txt", "r+") as authors_file:
+                with open("types.txt", "r+") as types_file:
+                    with open("ISBNs.txt", "r+") as ISBNs_file:
+                        with open("books.txt", "r") as books_file_2:
+                            with open("authors.txt", "r") as authors_file_2:
+                                with open("types.txt", "r") as types_file_2:
+                                    if deletePosition.get("1.0", "end-1c").isdigit():
+                                        if 0 <= int(deletePosition.get("1.0", "end-1c")) <= len(books_file_2.readlines()):
+                                            for i in range(len(authors_file_2.read())):
+                                                if not i == int(deletePosition.get("1.0", "end-1c")):
+                                                    if not types_file_2.readline() == "":
+                                                        rebuilding_book_list.append(books_file.readline())
+                                                        rebuilding_author_list.append(authors_file.readline())
+                                                        rebuilding_type_list.append(types_file.readline())
+                                                        rebuilding_isbn_list.append(ISBNs_file.readline())
+                                                        len_list += 1
+                                                else:
+                                                    books_file.readline()
+                                                    authors_file.readline()
+                                                    types_file.readline()
+                                                    ISBNs_file.readline()
+                                            books_file.close()
+                                            authors_file.close()
+                                            types_file.close()
+                                            ISBNs_file.close()
+                                            books_file_2.close()
+                                            authors_file_2.close()
+                                            types_file_2.close()
+                                        else:
+                                            return "nothing"
+        with open("books.txt", "w+") as books_file_w:
+            with open("authors.txt", "w+") as authors_file_w:
+                with open("types.txt", "w+") as types_file_w:
+                    with open("ISBNs.txt", "w+") as ISBNs_file_w:
+                        for i in range(len_list):
+                            if not (i + 1 >= len_list and int(deletePosition.get("1.0", "end-1c")) == len_list):
+                                books_file_w.write(rebuilding_book_list[i])
+                                authors_file_w.write(rebuilding_author_list[i])
+                                types_file_w.write(rebuilding_type_list[i])
+                                ISBNs_file_w.write(rebuilding_isbn_list[i])
+                            else:
+                                books_file_w.write(rebuilding_book_list[i][:-1])
+                                authors_file_w.write(rebuilding_author_list[i][:-1])
+                                types_file_w.write(rebuilding_type_list[i][:-1])
+                                ISBNs_file_w.write(rebuilding_isbn_list[i][:-1])
+                        books_file_w.close()
+                        authors_file_w.close()
+                        types_file_w.close()
+                        ISBNs_file_w.close()
     return "nothing"
 
+
+def search():
+    global books
+    global book_list
+    global authors
+    global author_list
+    global types
+    global type_list
+    global ISBNs
+    global ISBN_list
+    books = open("books.txt", "r+").read()
+    book_list = books.split("\n")
+    authors = open("authors.txt", "r+").read()
+    author_list = authors.split("\n")
+    types = open("types.txt", "r+").read()
+    type_list = types.split("\n")
+    ISBNs = open("ISBNs.txt", "r+").read()
+    ISBN_list = ISBNs.split("\n")
+    list_window = Toplevel()
+    list_area = scrolledtext.ScrolledText(list_window, wrap=tkinter.WORD, width=60, height=20)
+    lower_books = open("books.txt", "r+").read().lower()
+    lower_book_list = lower_books.split("\n")
+    lower_authors = open("authors.txt", "r+").read().lower()
+    lower_author_list = lower_authors.split("\n")
+    lower_types = open("types.txt", "r+").read().lower()
+    lower_type_list = lower_types.split("\n")
+    lower_isbns = open("ISBNs.txt", "r+").read().lower()
+    lower_isbn_list = lower_isbns.split("\n")
+    if searchType.current() == 0:  # Name
+        list_window.title("Entries Containing \"" + searchText.get("1.0", "end-1c").lower() + "\" in their title")
+        for i in range(len(book_list)):
+            if searchText.get("1.0", "end-1c").lower() in lower_book_list[i]:
+                if type_list[i] == "Book":
+                    list_area.insert(END, str(i) + ". " + book_list[i])
+                    list_area.insert(END, "\n      By " + author_list[i] + " (" + type_list[i] + ")" + "(ISBN: " +ISBN_list[i] + ")")
+                elif type_list[i] == "Movie":
+                    list_area.insert(END, str(i) + ". " + book_list[i])
+                    list_area.insert(END, "\n      Directed by " + author_list[i] + " (" + type_list[i] + ")")
+                else:
+                    list_area.insert(END, str(i) + ". " + book_list[i])
+                    list_area.insert(END, "\n      By " + author_list[i] + " (" + type_list[i] + ")")
+                list_area.insert(END, "\n")
+        list_area.pack(fill=BOTH, side=LEFT, expand=TRUE)
+    elif searchType.current() == 1:  # Author/creator
+        list_window.title("Entries Containing \"" + searchText.get("1.0", "end-1c").lower() + "\" in author's name")
+        for i in range(len(book_list)):
+            if searchText.get("1.0", "end-1c").lower() in lower_author_list[i]:
+                if type_list[i] == "Book":
+                    list_area.insert(END, str(i) + ". " + book_list[i])
+                    list_area.insert(END,
+                                     "\n      By " + author_list[i] + " (" + type_list[i] + ")" + "(ISBN: " + ISBN_list[
+                                         i] + ")")
+                elif type_list[i] == "Movie":
+                    list_area.insert(END, str(i) + ". " + book_list[i])
+                    list_area.insert(END, "\n      Directed by " + author_list[i] + " (" + type_list[i] + ")")
+                else:
+                    list_area.insert(END, str(i) + ". " + book_list[i])
+                    list_area.insert(END, "\n      By " + author_list[i] + " (" + type_list[i] + ")")
+                list_area.insert(END, "\n")
+        list_area.pack(fill=BOTH, side=LEFT, expand=TRUE)
+    elif searchType.current() == 2:  # Type
+        list_window.title("Entries Containing \"" + searchText.get("1.0", "end-1c").lower() + "\" in their type")
+        for i in range(len(book_list)):
+            if searchText.get("1.0", "end-1c").lower() in lower_type_list[i]:
+                if type_list[i] == "Book":
+                    list_area.insert(END, str(i) + ". " + book_list[i])
+                    list_area.insert(END,
+                                     "\n      By " + author_list[i] + " (" + type_list[i] + ")" + "(ISBN: " + ISBN_list[
+                                         i] + ")")
+                elif type_list[i] == "Movie":
+                    list_area.insert(END, str(i) + ". " + book_list[i])
+                    list_area.insert(END, "\n      Directed by " + author_list[i] + " (" + type_list[i] + ")")
+                else:
+                    list_area.insert(END, str(i) + ". " + book_list[i])
+                    list_area.insert(END, "\n      By " + author_list[i] + " (" + type_list[i] + ")")
+                list_area.insert(END, "\n")
+        list_area.pack(fill=BOTH, side=LEFT, expand=TRUE)
+    elif searchType.current() == 3:  # ISBN
+        list_window.title("Entries Containing \"" + searchText.get("1.0", "end-1c").lower() + "\" in their ISBN")
+        for i in range(len(book_list)):
+            if searchText.get("1.0", "end-1c").lower() in lower_isbn_list[i]:
+                if type_list[i] == "Book":
+                    list_area.insert(END, str(i) + ". " + book_list[i])
+                    list_area.insert(END,
+                                     "\n      By " + author_list[i] + " (" + type_list[i] + ")" + "(ISBN: " + ISBN_list[
+                                         i] + ")")
+                elif type_list[i] == "Movie":
+                    list_area.insert(END, str(i) + ". " + book_list[i])
+                    list_area.insert(END, "\n      Directed by " + author_list[i] + " (" + type_list[i] + ")")
+                else:
+                    list_area.insert(END, str(i) + ". " + book_list[i])
+                    list_area.insert(END, "\n      By " + author_list[i] + " (" + type_list[i] + ")")
+                list_area.insert(END, "\n")
+        list_area.pack(fill=BOTH, side=LEFT, expand=TRUE)
 
 
 def secret_command():
@@ -309,7 +398,7 @@ btnSeeBooks = Button(root, text="See all entries", command=print_stuff, cursor="
 btnSeeBooks.place(x=5, y=5)
 
 # Creating the edit a book button
-btnEditABook = Button(root, text="Save name edits (box 1 is the entry number; box 2 is the new name)", command=edit_book, cursor="hand2")
+btnEditABook = Button(root, text="Save title edits (box 1 is the entry number; box 2 is the new title)", command=edit_book, cursor="hand2")
 btnEditABook.place(x=5, y=35)
 
 # Creating input areas for editing books
@@ -378,6 +467,15 @@ deleteButton = Button(root, text="Delete item at position:", command=delete_entr
 deleteButton.place(x=5, y=473)
 deletePosition = Text(root, height=1, width=3, bg="light yellow")
 deletePosition.place(x=140, y=476)
+
+# Search button
+searchButton = Button(root, text="Search", command=search)
+searchButton.place(x=5, y=525)
+searchType = ttk.Combobox(state="readonly", values=["Name", "Author/creator", "Type", "ISBN"])
+searchType.place(x=55, y=527)
+# Use .current() to find the index of the dropdown list
+searchText = Text(root, height=1, width=45, bg="light yellow")
+searchText.place(x=5, y=560)
 
 # Nothing here
 btnNothing = Button(root, text="?", command=secret_command, cursor="plus")
